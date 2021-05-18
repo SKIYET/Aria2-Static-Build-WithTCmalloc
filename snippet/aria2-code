@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2020 P3TERX <https://p3terx.com>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+# https://github.com/P3TERX/Aria2-Pro-Core
+# File name: snippet/aria2-code
+#
+
+ARIA2_GIT_CODE() {
+    if [[ -d $ARIA2_CODE_DIR && -d $ARIA2_CODE_DIR/.git ]]; then
+        cd $ARIA2_CODE_DIR
+        git checkout master || git checkout HEAD
+        git reset --hard origin || git reset --hard
+        git pull
+    else
+        rm -rf $ARIA2_CODE_DIR
+        git clone https://github.com/aria2/aria2 $ARIA2_CODE_DIR
+        cd $ARIA2_CODE_DIR
+    fi
+    autoreconf -fi || autoreconf -fiv
+}
+
+ARIA2_RELEASE_CODE() {
+    mkdir -p $ARIA2_CODE_DIR && cd $ARIA2_CODE_DIR
+    curl -s 'https://api.github.com/repos/aria2/aria2/releases/latest' |
+        grep 'browser_download_url.*[0-9]\.tar\.xz' | sed -e 's/^[[:space:]]*//' |
+        cut -d ' ' -f 2 | xargs -I % curl -Ls -o - '%' | tar Jxvf - --strip-components=1
+}
+
+ARIA2_PATCH() {
+    git apply $SCRIPT_DIR/patch/*.patch
+}
+
+ARIA2_CODE_GET() {
+    #ARIA2_RELEASE_CODE
+    ARIA2_GIT_CODE
+    ARIA2_PATCH
+}

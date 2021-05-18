@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2020 P3TERX <https://p3terx.com>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+# https://github.com/P3TERX/Aria2-Pro-Core
+# File name: snippet/aria2-bin
+#
+
+ARIA2_BIN() {
+    cd $ARIA2_CODE_DIR/src
+    $STRIP aria2c
+    mkdir -p $OUTPUT_DIR
+    cp aria2c $OUTPUT_DIR
+}
+
+ARIA2_PACKAGE() {
+    cd $ARIA2_CODE_DIR/src
+    $STRIP aria2c
+    cp /etc/ssl/certs/ca-certificates.crt ca-certificates.crt
+    mkdir -p $OUTPUT_DIR
+    tar zcvf $OUTPUT_DIR/aria2-static-linux-$ARCH.tar.gz aria2c ca-certificates.crt
+}
+
+ARIA2_INSTALL() {
+    cd $ARIA2_CODE_DIR
+    make install-strip
+}

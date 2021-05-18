@@ -1,0 +1,100 @@
+#BISON='http://ftp.gnu.org/gnu/bison/bison-3.7.6.tar.gz'
+#GAWK='http://ftp.gnu.org/gnu/gawk/gawk-5.1.0.tar.gz'
+#GLIBC='http://ftpmirror.gnu.org/gnu/libc/glibc-2.31.tar.gz'
+#ZLIB='https://www.zlib.net/zlib-1.2.11.tar.gz'
+#EXPAT='https://github.com/libexpat/libexpat/releases/download/R_2_3_0/expat-2.3.0.tar.bz2'
+#C_ARES='https://c-ares.haxx.se/download/c-ares-1.17.1.tar.gz'
+#OPENSSL='https://www.openssl.org/source/openssl-1.1.1k.tar.gz'
+#SQLITE3='https://www.sqlite.org/2021/sqlite-autoconf-3350500.tar.gz'
+#LIBSSH2='https://www.libssh2.org/download/libssh2-1.9.0.tar.gz'
+#JEMALLOC='https://github.com/jemalloc/jemalloc/releases/download/5.2.1/jemalloc-5.2.1.tar.bz2'
+
+DEPENDENCES_TOOLS()    {  
+	#### 定义函数以获取最新版 ####
+	curl_opts=(curl --connect-timeout 15 --retry 3
+		--retry-delay 5 --silent --location --insecure --fail)
+
+	clean_html_index() {
+		local url="$1"
+		local filter="${2:-(?<=href=\")[^\"]+\.(tar\.(gz|bz2|xz)|7z)}"
+		"${curl_opts[@]}" -l "$url" | grep -ioP "$filter" | sort -uV
+		}
+
+	clean_html_index_sqlite() {
+		local url="$1"
+		local filter="${2:-(\d+\/sqlite-autoconf-\d+\.tar\.gz)}"
+		"${curl_opts[@]}" -l "$url" | grep -ioP "$filter" | sort -uV | tail -1
+	}
+
+	get_last_version() {
+		local filelist="$1"
+		local filter="$2"
+		local version="$3"
+		local ret
+		ret="$(echo "$filelist" | grep -E "$filter" | sort -V | tail -1)"
+		[[ -n "$version" ]] && ret="$(echo "$ret" | grep -oP "$version")"
+		echo "$ret"
+	}
+}
+
+DEPENDENCES_UPDATE()    {    
+	#BISON="http://ftp.gnu.org/gnu/bison/$(curl -sNL http://ftp.gnu.org/gnu/bison/ | grep -Eo 'bison-([0-9]{1,3}[.]?)([0-9]{1,3}[.]?)([0-9]{1,3}?)\.tar.gz' | sort -V | tail -1)"
+	#
+	bison_ver="$(clean_html_index http://ftp.gnu.org/gnu/bison/ 'bison-[0-9]+\.[0-9]+\.[0-9]+')"
+	bison_ver="$(get_last_version "${bison_ver}" bison '\d+\.\d+\.\d+')"
+	BISON="http://ftp.gnu.org/gnu/bison/bison-${bison_ver}.tar.gz"
+
+
+	#GAWK="http://ftp.gnu.org/gnu/gawk/$(curl -sNL http://ftp.gnu.org/gnu/gawk/ | grep -Eo 'gawk-([0-9]{1,3}[.]?)([0-9]{1,3}[.]?)([0-9]{1,3}?)\.tar.gz' | sort -V | tail -1)"
+	#
+	gawk_ver="$(clean_html_index http://ftp.gnu.org/gnu/gawk/ 'gawk-[0-9]+\.[0-9]+\.[0-9]+')"
+	gawk_ver="$(get_last_version "${gawk_ver}" gawk '\d+\.\d+(\.\d*)?')"
+	GAWK="http://ftp.gnu.org/gnu/gawk/gawk-${gawk_ver}.tar.gz"
+
+	#Glibc 3.32及更高版本虽然已经推出，但是gperftools和libunwind并未支持。支持后可以使用原链接，现在暂时使用2.31版本链接。
+	#export glibc_url="http://ftp.gnu.org/gnu/libc/$(curl -sNL http://ftp.gnu.org/gnu/libc/ | grep -Eo 'glibc-([0-9]{1,3}[.]?)([0-9]{1,3}[.]?)([0-9]{1,3}?)\.tar.gz' | sort -V | tail -1)"  #一种获取最新版本的方式，较为简洁。
+	glibc_ver="$(clean_html_index http://ftp.gnu.org/gnu/libc/ 'glibc-([0-9]{1,3}[.]?)([0-9]{1,3}[.]?)([0-9]{1,3}?)')"
+	glibc_ver="$(get_last_version "${glibc_ver}" glibc '2\.\d+(\.\d*)?')"
+	glibc_ver="2.31"
+	GLIBC="http://ftp.gnu.org/gnu/libc/glibc-${glibc_ver}.tar.gz"
+	#
+	zlib_ver="$(clean_html_index https://sourceforge.net/projects/libpng/files/zlib/ 'zlib/[0-9]+\.[0-9]+\.[0-9]+')"
+	zlib_ver="$(get_last_version "${zlib_ver}" zlib '1\.\d+\.\d+')"
+	ZLIB="https://www.zlib.net/zlib-${zlib_ver}.tar.gz"
+
+	#
+	openssl_ver="$(clean_html_index https://www.openssl.org/source/ 'openssl-[0-9]+\.[0-9]+\.[0-9]+[a-z]+')"
+	openssl_ver="$(get_last_version "${openssl_ver}" openssl '1\.\d+\.\d+[a-z]+')"
+	OPENSSL="https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz"
+	#
+	expat_ver="$(clean_html_index https://sourceforge.net/projects/expat/files/expat/ 'expat/[0-9]+\.[0-9]+\.[0-9]+')"
+	expat_ver="$(get_last_version "${expat_ver}" expat '2\.\d+\.\d+')"
+	EXPAT="https://downloads.sourceforge.net/project/expat/expat/${expat_ver}/expat-${expat_ver}.tar.bz2"
+	#
+	[[ ! "$cares_ver" ]] && cares_ver="$(clean_html_index https://c-ares.haxx.se/)" &&
+	cares_ver="$(get_last_version "$cares_ver" c-ares "1\.\d+\.\d*")"
+	C_ARES="https://c-ares.haxx.se/download/c-ares-${cares_ver}.tar.gz"
+
+	sqlite_ver=$(clean_html_index_sqlite "https://www.sqlite.org/download.html")
+	SQLITE3="https://www.sqlite.org/${sqlite_ver}"
+
+	libssh2_ver="$(clean_html_index https://libssh2.org/download/)" &&
+	libssh2_ver="$(get_last_version "$libssh2_ver" libssh2 "1\.\d+\.\d*")"
+	LIBSSH2="https://libssh2.org/download/libssh2-${libssh2_ver}.tar.gz"
+
+	libunwind_ver="$(clean_html_index http://download.savannah.gnu.org/releases/libunwind/ 'libunwind-[0-9]+\.[0-9]+(\.[0-9])*[^\-\w]')"
+	libunwind_ver="$(get_last_version "${libunwind_ver}" libunwind '1\.\d+\.\d+')"
+	LIBUNWIND="http://download.savannah.gnu.org/releases/libunwind/libunwind-$libunwind_ver.tar.gz"
+
+	export gperftools_github_tag="$(curl -sNL https://github.com/gperftools/gperftools/tags | grep -Eom1 'gperftools-2.[0-9]{1,3}(\.[0-9]){0,3}')"
+	GPERFTOOLS="https://github.com/gperftools/gperftools/releases/download/${gperftools_github_tag}/${gperftools_github_tag}.tar.gz"
+
+	jemalloc_ver="$(clean_html_index https://github.com/jemalloc/jemalloc/tags)"
+	jemalloc_ver="$(get_last_version "${jemalloc_ver}" jemalloc '\d+\.\d+\.\d+')"
+	JEMALLOC="https://github.com/jemalloc/jemalloc/releases/download/${jemalloc_ver}/jemalloc-${jemalloc_ver}.tar.bz2"
+}
+
+DEPENDENCES_GET () {
+	DEPENDENCES_TOOLS
+	DEPENDENCES_UPDATE
+}

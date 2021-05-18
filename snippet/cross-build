@@ -1,0 +1,151 @@
+#
+# Copyright (c) 2020 P3TERX <https://p3terx.com>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+# https://github.com/P3TERX/Aria2-Pro-Core
+# File name: snippet/cross-build
+#
+
+ZLIB_BUILD() {
+    mkdir -p $BUILD_DIR/zlib && cd $BUILD_DIR/zlib
+    curl -Ls -o - "$ZLIB" | tar zxf - --strip-components=1
+    ./configure \
+        --prefix=$PREFIX \
+        --static
+    make -j$(nproc)
+    make install
+}
+
+EXPAT_BUILD() {
+    mkdir -p $BUILD_DIR/expat && cd $BUILD_DIR/expat
+    curl -Ls -o - "$EXPAT" | tar jxf - --strip-components=1
+    ./configure \
+        --host=$HOST \
+        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
+        --prefix=$PREFIX \
+        --enable-static \
+        --disable-shared \
+        --without-examples \
+        --without-tests \
+        --without-docbook
+    make -j$(nproc)
+    make install
+}
+
+C_ARES_BUILD() {
+    mkdir -p $BUILD_DIR/c-ares && cd $BUILD_DIR/c-ares
+    curl -Ls -o - "$C_ARES" | tar zxf - --strip-components=1
+    ./configure \
+        --host=$HOST \
+        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
+        --prefix=$PREFIX \
+        --enable-static \
+        --disable-shared \
+        --disable-tests
+    make -j$(nproc)
+    make install
+}
+	
+OPENSSL_BUILD() {
+    mkdir -p $BUILD_DIR/openssl && cd $BUILD_DIR/openssl
+    curl -Ls -o - "$OPENSSL" | tar zxf - --strip-components=1
+    ./Configure \
+        --prefix=$PREFIX \
+        $OPENSSL_ARCH \
+	no-asm \
+	threads \
+        zlib \
+        --with-zlib-include=$PREFIX/include \
+        --with-zlib-lib==$PREFIX/lib/ \
+        no-tests
+    make -j$(nproc)
+    make install_sw
+}
+
+SQLITE3_BUILD() {
+    mkdir -p $BUILD_DIR/sqlite3 && cd $BUILD_DIR/sqlite3
+    curl -Ls -o - "$SQLITE3" | tar zxf - --strip-components=1
+    ./configure \
+        --host=$HOST \
+        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
+        --prefix=$PREFIX \
+        --enable-static \
+	--enable-static-shell \
+        --disable-shared \
+        --disable-dynamic-extensions
+    make -j$(nproc)
+    make install
+}
+
+LIBSSH2_BUILD() {
+    mkdir -p $BUILD_DIR/libssh2 && cd $BUILD_DIR/libssh2
+    curl -Ls -o - "$LIBSSH2" | tar zxf - --strip-components=1
+    ./configure \
+        --host=$HOST \
+        --prefix=$PREFIX \
+	--with-libz \
+        --with-openssl \
+        --without-libgcrypt \
+        --without-wincng \
+        --enable-static \
+        --disable-shared \
+        --disable-examples-build
+    make -j$(nproc)
+    make install
+}
+
+#LIBUNWIND_BUILD() {
+#    mkdir -p $BUILD_DIR/libunwind && cd $BUILD_DIR/libunwind
+#    curl -Ls -o - "$LIBUNWIND" | tar zxf - --strip-components=1
+#    ./configure \
+#	    --host=$HOST \
+#        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
+#        --prefix=$DEFAULT_PREFIX \
+#        --enable-static \
+#        --disable-shared 
+#    make -j$(nproc)
+#    make install
+#}
+
+GPERFTOOLS_BUILD() {
+    mkdir -p $BUILD_DIR/gperftools && cd $BUILD_DIR/gperftools
+    curl -Ls -o - "$GPERFTOOLS" | tar zxf - --strip-components=1
+    ./configure \
+	--host=$HOST \
+        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
+        --prefix=$PREFIX \
+        --enable-static \
+        --disable-shared \
+        --enable-frame-pointers
+    make -j$(nproc)
+    make install
+}
+
+ARIA2_BUILD() {
+    ARIA2_CODE_GET
+    PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/ \
+    LD_LIBRARY_PATH=$PREFIX/ \
+    ./configure \
+        --host=$HOST \
+        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
+        --prefix=${ARIA2_PREFIX:-'/usr/loacl'} \
+        --with-libz \
+        --with-libcares \
+        --with-libexpat \
+        --without-libxml2 \
+        --without-libgcrypt \
+        --with-openssl \
+        --without-libnettle \
+        --without-gnutls \
+        --without-libgmp \
+        --with-libssh2 \
+        --with-sqlite3 \
+        --with-tcmalloc \
+        --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt' \
+		--enable-threads=posix \
+        ARIA2_STATIC=yes \
+        --disable-shared
+    make -j$(nproc)
+}
