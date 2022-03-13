@@ -32,16 +32,16 @@ jobs:
         #PLATFORMS: [amd64, arm64,  i386]
         include:
         - PLATFORMS: amd64
-          BUILDER_IMAGE: ubuntu:20.04
+          BUILDER_IMAGE: debian:11
           BUILD_SCRIPT: aria2-gnu-linux-build-amd64.sh
         - PLATFORMS: arm64
-          BUILDER_IMAGE: ubuntu:20.04
+          BUILDER_IMAGE: debian:11
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-arm64.sh
         - PLATFORMS: armhf
-          BUILDER_IMAGE: ubuntu:20.04
+          BUILDER_IMAGE: debian:11
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-armhf.sh
         - PLATFORMS: i386
-          BUILDER_IMAGE: debian:10
+          BUILDER_IMAGE: debian:11
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-i386.sh
 
     steps:
