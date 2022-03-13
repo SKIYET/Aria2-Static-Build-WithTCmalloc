@@ -1,3 +1,9 @@
+#openssl 已更新到3.0.x系列，判断中需要强调末尾字母的判断，及版本号首个数字改为3。
+#glibc编译新版本容易失败，建议固定2.31.
+#libssh2在使用新版openssl编译时需要指定openssl库目录。可以在github其仓库查看autotools下的部署说明。
+#时间有限，下次再彻底更新。
+
+
 #BISON='http://ftp.gnu.org/gnu/bison/bison-3.7.6.tar.gz'
 #GAWK='http://ftp.gnu.org/gnu/gawk/gawk-5.1.0.tar.gz'
 #GLIBC='http://ftpmirror.gnu.org/gnu/libc/glibc-2.31.tar.gz'
