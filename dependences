@@ -56,7 +56,7 @@ DEPENDENCES_UPDATE()    {
 	#export glibc_url="http://ftp.gnu.org/gnu/libc/$(curl -sNL http://ftp.gnu.org/gnu/libc/ | grep -Eo 'glibc-([0-9]{1,3}[.]?)([0-9]{1,3}[.]?)([0-9]{1,3}?)\.tar.gz' | sort -V | tail -1)"  #一种获取最新版本的方式，较为简洁。
 	glibc_ver="$(clean_html_index http://ftp.gnu.org/gnu/libc/ 'glibc-([0-9]{1,3}[.]?)([0-9]{1,3}[.]?)([0-9]{1,3}?)')"
 	glibc_ver="$(get_last_version "${glibc_ver}" glibc '2\.\d+(\.\d*)?')"
-	#glibc_ver="2.31"
+	glibc_ver="2.31"
 	GLIBC="http://ftp.gnu.org/gnu/libc/glibc-${glibc_ver}.tar.gz"
 	#
 	zlib_ver="$(clean_html_index https://sourceforge.net/projects/libpng/files/zlib/ 'zlib/[0-9]+\.[0-9]+\.[0-9]+')"
