@@ -81,6 +81,8 @@ OPENSSL_BUILD() {
         --prefix=$PREFIX \
         $OPENSSL_ARCH \
         threads \
+        no-shared \
+        no-dso \
         zlib \
         --with-zlib-include=$PREFIX/include \
         --with-zlib-lib==$PREFIX/lib/ \
