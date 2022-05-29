@@ -32,7 +32,8 @@ GLIBC_BUILD() {
     mkdir -p $BUILD_DIR/glibc/build && cd $BUILD_DIR/glibc/build
     $BUILD_DIR/glibc/configure \
         --prefix=$PREFIX \
-        --enable-static-nss
+        --enable-static-nss \
+        --disable-nscd
     make -j$(nproc) >/dev/null 2>&1
     make install
 }
