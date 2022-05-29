@@ -65,9 +65,9 @@ DEPENDENCES_UPDATE()    {
 	glibc_ver="2.31"
 	GLIBC="http://ftp.gnu.org/gnu/libc/glibc-${glibc_ver}.tar.gz"
 	#
-	zlib_ver="$(clean_html_index https://sourceforge.net/projects/libpng/files/zlib/ 'zlib/[0-9]+\.[0-9]+\.[0-9]+')"
-	zlib_ver="$(get_last_version "${zlib_ver}" zlib '1\.\d+\.\d+')"
-	ZLIB="https://www.zlib.net/zlib-${zlib_ver}.tar.gz"
+	zlib_ver="$(clean_html_index https://github.com/madler/zlib/tags 'v[0-9]+\.[0-9]+\.[0-9]+')"
+	zlib_ver="$(get_last_version "${zlib_ver}" v '1\.\d+\.\d+')"
+	ZLIB="https://github.com/madler/zlib/archive/refs/tags/v${zlib_ver}.tar.gz"
 
 	#
 	openssl_ver="$(clean_html_index https://www.openssl.org/source/ 'openssl-[0-9]+\.[0-9]+\.[0-9]+[a-z]+')"
