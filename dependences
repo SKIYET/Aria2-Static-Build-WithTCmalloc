@@ -58,7 +58,7 @@ DEPENDENCES_UPDATE()    {
 	gawk_ver="$(get_last_version "${gawk_ver}" gawk '\d+\.\d+(\.\d*)?')"
 	GAWK="http://ftp.gnu.org/gnu/gawk/gawk-${gawk_ver}.tar.gz"
 
-	#Glibc 3.32及更高版本虽然已经推出，但是gperftools和libunwind并未支持。支持后可以使用原链接，现在暂时使用2.31版本链接。
+	#Glibc 2.32及更高版本虽然已经推出，但是gperftools和libunwind并未支持。支持后可以使用原链接，现在暂时使用2.31版本链接。
 	#export glibc_url="http://ftp.gnu.org/gnu/libc/$(curl -sNL http://ftp.gnu.org/gnu/libc/ | grep -Eo 'glibc-([0-9]{1,3}[.]?)([0-9]{1,3}[.]?)([0-9]{1,3}?)\.tar.gz' | sort -V | tail -1)"  #一种获取最新版本的方式，较为简洁。
 	glibc_ver="$(clean_html_index http://ftp.gnu.org/gnu/libc/ 'glibc-([0-9]{1,3}[.]?)([0-9]{1,3}[.]?)([0-9]{1,3}?)')"
 	glibc_ver="$(get_last_version "${glibc_ver}" glibc '2\.\d+(\.\d*)?')"
@@ -70,8 +70,8 @@ DEPENDENCES_UPDATE()    {
 	ZLIB="https://github.com/madler/zlib/archive/refs/tags/v${zlib_ver}.tar.gz"
 
 	#
-	openssl_ver="$(clean_html_index https://www.openssl.org/source/ 'openssl-[0-9]+\.[0-9]+\.[0-9]+[a-z]+')"
-	openssl_ver="$(get_last_version "${openssl_ver}" openssl '1\.\d+\.\d+[a-z]+')"
+	openssl_ver="$(clean_html_index https://www.openssl.org/source/ 'openssl-[0-9]+\.[0-9]{1,2}\.[0-9][a-z]{0,1}')"
+	openssl_ver="$(get_last_version "${openssl_ver}" openssl '3\.[0-9]{1,2}\.[0-9][a-z]{0,1}')"
 	OPENSSL="https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz"
 	#
 	expat_ver="$(clean_html_index https://sourceforge.net/projects/expat/files/expat/ 'expat/[0-9]+\.[0-9]+\.[0-9]+')"
