@@ -81,7 +81,6 @@ OPENSSL_BUILD() {
         --prefix=$PREFIX \
         $OPENSSL_ARCH \
         threads \
-        no-shared \
         no-dso \
         zlib \
         --with-zlib-include=$PREFIX/include \
@@ -107,6 +106,7 @@ SQLITE3_BUILD() {
 LIBSSH2_BUILD() {
     mkdir -p $BUILD_DIR/libssh2 && cd $BUILD_DIR/libssh2
     curl -Ls -o - "$LIBSSH2" | tar zxf - --strip-components=1
+    autoreconf -fi
     ./configure \
         --prefix=$PREFIX \
         --with-libz \
@@ -123,6 +123,7 @@ LIBSSH2_BUILD() {
 LIBUNWIND_BUILD() {
     mkdir -p $BUILD_DIR/libunwind && cd $BUILD_DIR/libunwind
     curl -Ls -o - "$LIBUNWIND" | tar zxf - --strip-components=1
+    autoreconf -fi
     ./configure \
         --prefix=$DEFAULT_PREFIX \
         --enable-static \
