@@ -56,7 +56,7 @@ OPENSSL_BUILD() {
         $OPENSSL_ARCH \
 	no-asm \
 	threads \
-	no-dso \
+	shared \
         zlib \
         --with-zlib-include=$PREFIX/include \
         --with-zlib-lib==$PREFIX/lib/ \
