@@ -70,9 +70,9 @@ DEPENDENCES_UPDATE()    {
 	ZLIB="https://github.com/madler/zlib/archive/refs/tags/v${zlib_ver}.tar.gz"
 
 	#
-	openssl_ver="$(clean_html_index https://www.openssl.org/source/ 'openssl-[0-9]+\.[0-9]+\.[0-9]+[a-z]+')"
+	openssl_ver="$(clean_html_index https://www.openssl.org/source/ 'openssl-3\.[0-9]+\.[0-9]+[a-z]+')"
 	#openssl 1.1.x启用
-	openssl_ver="$(get_last_version "${openssl_ver}" openssl '1\.\d+\.\d+[a-z]+')"
+	openssl_ver="$(get_last_version "${openssl_ver}" openssl '3\.\d+\.\d+[a-z]{0,1}')"
 	OPENSSL="https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz"
 	#
 	expat_ver="$(clean_html_index https://sourceforge.net/projects/expat/files/expat/ 'expat/[0-9]+\.[0-9]+\.[0-9]+')"
