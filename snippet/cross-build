@@ -56,7 +56,8 @@ OPENSSL_BUILD() {
         $OPENSSL_ARCH \
 	no-asm \
 	threads \
-        no-module \
+#no-module is necessary for building openssl 3.0.x, or the aria2c will be illed.
+#        no-module \
 	shared \
         zlib \
         --with-zlib-include=$PREFIX/include \
