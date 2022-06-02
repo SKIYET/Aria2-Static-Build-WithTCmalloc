@@ -81,8 +81,6 @@ OPENSSL_BUILD() {
         --prefix=$PREFIX \
         $OPENSSL_ARCH \
         threads \
-#no-module is necessary for building openssl 3.0.x, or the aria2c will be illed.
-#        no-module \
         shared \
         zlib \
         --with-zlib-include=$PREFIX/include \
